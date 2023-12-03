@@ -10,7 +10,8 @@ def main():
 
     with open(FILEPATH, "r") as file:
         for line in file:
-            game_id, result = parse_line(line)
+            game_id, sets = extract_game_data(line)
+            game_id, result = process_game_data(game_id, sets)
             print(f"game_id: {game_id}")
             print(f"result: {result}")
 
@@ -20,33 +21,23 @@ def main():
         print(f"sum_id: {sum_id}")
 
 
-def parse_line(string: str):
-    result = True
-    game = re.split(':', string)
-    game_id = get_game_id(game)
-    sets = get_sets(game)
+def extract_game_data(string):
+    """Extracts game ID and sets from the given string."""
+    game = re.split(': ', string)
+    game_id = game[0].split('Game ')[1]
+    sets = game[1].split(';')
+    return game_id, sets
+
+
+def process_game_data(game_id, sets):
+    """Processes game data to determine the result based on cubes in sets."""
     for subset in sets:
-        cubes = get_cubes(subset)
+        cubes = subset.split(',')
         result = analyze_cubes(cubes)
-        if (result == False):
-            break
+        if not result:
+            return game_id, result
 
-    return game_id, result
-
-
-def get_game_id(game: str):
-    game_id = re.split('Game ', game[0])
-    return game_id[1]
-
-
-def get_sets(game: str):
-    sets = re.split(';', game[1])
-    return sets
-
-
-def get_cubes(subset: str):
-    cubes = re.split(',', subset)
-    return cubes
+    return game_id, True
 
 
 def analyze_cubes(cubes: list):
