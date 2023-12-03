@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-import os
-import sys
 
 URL = "https://adventofcode.com/2023/day/1/input"
 FILEPATH = "day_1/data.txt"
